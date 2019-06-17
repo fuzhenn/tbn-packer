@@ -8,9 +8,14 @@ import { vec3, quat } from 'gl-matrix';
 
 const CHAR_BIT = 8;
 
+const MAT0 = [];
+const TMP0 = [];
+const TMP1 = [];
+const TMP2 = [];
+
 export function packTangentFrame(q, /* vec3 */n, /* vec4 */t) {
-    const c = vec3.cross([], n, t);
-    const mat = [t[0], t[1], t[2], ...c, ...n];
+    const c = vec3.cross(TMP0, n, t);
+    const mat = toMat3(MAT0, t[0], t[1], t[2], ...c, ...n);
     q = quat.fromMat3(q, mat);
     q = quat.normalize(q, q);
     q = positive(q);
@@ -27,43 +32,52 @@ export function packTangentFrame(q, /* vec3 */n, /* vec4 */t) {
         q[2] *= factor;
     }
 
-    const b = t[3] > 0 ? vec3.cross([], t, n) : vec3.cross([], n, t);
+    const b = t[3] > 0 ? vec3.cross(TMP1, t, n) : vec3.cross(TMP1, n, t);
     
     // If there's a reflection ((n x t) . b <= 0), make sure w is negative
-    const cc = vec3.cross([], t, n);
+    const cc = vec3.cross(TMP2, t, n);
     if (vec3.dot(cc, b) < 0) {
         quat.scale(q, q, -1);
     }
     return q;
 }
 
-const A = [0.0,  0.0,  1.0];
-const B = [2.0, -2.0, -2.0];
-const C = [];
-const D = [2.0,  2.0, -2.0];
-const E = [];
-const N1= [];
-const N2 = [];
+function toMat3(out, c00, c01, c02, c10, c11, c12, c20, c21, c22) {
+    out[0] = c00;
+    out[1] = c01;
+    out[2] = c02;
+
+    out[3] = c10;
+    out[4] = c11;
+    out[5] = c12;
+
+    out[6] = c20;
+    out[7] = c21;
+    out[8] = c22;
+
+    return out;
+}
+
+const F0 = [0.0,  0.0,  1.0];
+const F1 = [2.0, -2.0, -2.0];
+const F2 = [2.0,  2.0, -2.0];
 /**
  * Extracts the normal vector of the tangent frame encoded in the specified quaternion.
  */
 function toNormal(out, q) {
-    const n0 = A;
-    const n1 = vec3.scale(N1, B, q[0]);
-    vec3.multiply(n1, n1, vec3.set(C, q[2], q[3], q[0]));
-    const n2 = vec3.scale(N2, D, q[1]);
-    vec3.multiply(n2, n2, vec3.set(E, q[3], q[2], q[1]));
+    const n0 = F0;
+    const n1 = vec3.scale(TMP0, F1, q[0]);
+    vec3.multiply(n1, n1, vec3.set(TMP1, q[2], q[3], q[0]));
+    const n2 = vec3.scale(TMP2, F2, q[1]);
+    vec3.multiply(n2, n2, vec3.set(TMP1, q[3], q[2], q[1]));
 
     vec3.add(out, n0, n1);
     vec3.add(out, out, n2);
 }
 
-const AA = [1, 0, 0];
-const BB = [-2, 2, -2];
-const CC = [];
-const DD = [-2, 2, 2];
-const EE = [];
-const T1 = [], T2 = [];
+const Q0 = [1, 0, 0];
+const Q1 = [-2, 2, -2];
+const Q2 = [-2, 2, 2];
 /**
  * Extracts the normal and tangent vectors of the tangent frame encoded in the
  * specified quaternion.
@@ -71,16 +85,14 @@ const T1 = [], T2 = [];
 export function unpackQuaternion(q, n, t) {
     toNormal(n, q);
 
-    const t0 = AA;
-    const t1 = vec3.scale(T1, BB, q[1]);
-    vec3.multiply(t1, t1, vec3.set(CC, q[1], q[0], q[3]));
-    const t2 = vec3.scale(T2, DD, q[2]);
-    vec3.multiply(t2, t2, vec3.set(EE, q[2], q[3], q[0]));
+    const t0 = Q0;
+    const t1 = vec3.scale(TMP0, Q1, q[1]);
+    vec3.multiply(t1, t1, vec3.set(TMP1, q[1], q[0], q[3]));
+    const t2 = vec3.scale(TMP2, Q2, q[2]);
+    vec3.multiply(t2, t2, vec3.set(TMP1, q[2], q[3], q[0]));
 
-    const tangent = vec3.add([], t0, t1);
-    vec3.add(tangent, tangent, t2);
-
-    vec3.copy(t, tangent);
+    vec3.add(t, t0, t1);
+    vec3.add(t, t, t2);
 }
 
 
