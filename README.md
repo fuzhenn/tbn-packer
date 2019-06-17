@@ -5,7 +5,22 @@ Pack tangent and normal data into a quaternion, a useful [tech published by cryt
 
 This is converted from C++ implementation of [google filament](https://github.com/google/filament).
 
-## GLSL Code to unpack
+## Usage
+
+```js
+import { packTangentFrame, unpackQuaternion } from "@maptalks/tbn-packer";
+const tangent = [1, 0, 0, 1];
+const normal = [0, 1, 0];
+
+const q = [];
+//pack tangent and normal to a quaternion
+packTangentFrame(q, tangent, normal);
+const n = [], t = [];
+//unpack a give quaternion to a normal and tangent.
+unpackQuaternion(q, n, t);
+```
+
+### GLSL Code to unpack
 
 From google filament:
 
