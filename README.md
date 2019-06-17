@@ -16,7 +16,7 @@ const q = [];
 //pack tangent and normal to a quaternion
 packTangentFrame(q, tangent, normal);
 const n = [], t = [];
-//unpack a give quaternion to a normal and tangent.
+//unpack a given quaternion to a normal and tangent.
 unpackQuaternion(q, n, t);
 ```
 
