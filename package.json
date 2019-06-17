@@ -1,8 +1,9 @@
 {
   "name": "@maptalks/tbn-packer",
   "version": "1.0.0",
-  "description": "pack normal and tangent vectors into a quaternion",
+  "description": "pack normal and tangent data into a quaternion",
   "main": "index.js",
+  "module": "index.js",
   "scripts": {
     "test": "mocha -r esm"
   },
