@@ -8,7 +8,7 @@ import { vec3, quat } from 'gl-matrix';
 
 const CHAR_BIT = 8;
 
-export function packTangentFrame(q, /* vec4 */t, /* vec3 */n) {
+export function packTangentFrame(q, /* vec3 */n, /* vec4 */t) {
     const c = vec3.cross([], n, t);
     const mat = [t[0], t[1], t[2], ...c, ...n];
     q = quat.fromMat3(q, mat);

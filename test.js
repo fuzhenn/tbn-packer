@@ -7,7 +7,7 @@ describe('specs', () => {
         const normal = [0, 1, 0];
 
         const q = [];
-        packTangentFrame(q, tangent, normal);
+        packTangentFrame(q, normal, tangent);
         const n = [], t = [];
         unpackQuaternion(q, n, t);
 
@@ -21,7 +21,7 @@ describe('specs', () => {
         const tangent = [0.9782581925392151, -0.20739074051380157, 0, 1];
 
         const q = [];
-        packTangentFrame(q, tangent, normal);
+        packTangentFrame(q, normal, tangent);
         const n = [], t = [];
         unpackQuaternion(q, n, t);
         assert.deepEqual(q, [0, 0, -0.1042636387271766, 0.9945496939014002]);
