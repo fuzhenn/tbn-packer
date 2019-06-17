@@ -98,7 +98,7 @@ export function unpackQuaternion(q, n, t) {
 
 function positive(q) {
     if (q[3] < 0) {
-        return quat.scale(q, -1);
+        return quat.scale(q, q, -1);
     } else {
         return q;
     }
@@ -165,7 +165,6 @@ export function buildNormals(vertices, indices) {
 export function buildTangents(positions, normals, uvs, indices) {
     const nVertices = positions.length / 3;
 
-    out.length = 4 * nVertices;
     const tangents = new Array(4 * nVertices);
 
     const tan1 = [], tan2 = [];
