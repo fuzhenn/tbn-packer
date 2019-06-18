@@ -3,7 +3,7 @@
 
 Pack tangent and normal data into a quaternion, a useful [tech published by crytek](http://www.crytek.com/download/izfrey_siggraph2011.pdf) to compress data push to GPU.
 
-This is converted from C++ implementation of [google filament](https://github.com/google/filament).
+This is ported from C++ implementation of [google filament](https://github.com/google/filament).
 
 ## Usage
 
