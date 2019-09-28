@@ -1,4 +1,6 @@
 import { vec3, quat } from 'gl-matrix';
+import Vertex from './Vertex';
+import Triangle from './Triangle';
 
 /*!
  * Contains code from google filament
@@ -104,53 +106,42 @@ function positive(q) {
     }
 }
 
-/*!
- * Contains code from claygl
- * https://github.com/pissang/claygl
- * License MIT
- * 
- * Generate normals per vertex.
- */
-export function buildNormals(vertices, indices) {
-    const normals = new Array(vertices.length);;
 
-    const p1 = new Array(3);
-    const p2 = new Array(3);
-    const p3 = new Array(3);
-
-    const v21 = new Array(3);
-    const v32 = new Array(3);
-    const n = new Array(3);
-
-    const len = indices.length;
-    let i1, i2, i3;
-    for (let f = 0; f < len;) {
-        if (indices) {
-            i1 = indices[f++];
-            i2 = indices[f++];
-            i3 = indices[f++];
-        } else {
-            i1 = f++;
-            i2 = f++;
-            i3 = f++;
+export function buildNormals(positions, indices) {
+    const faces = [];
+    const vertexes = [];
+    const normals = [];
+    let i = 0;
+    //create vertex struct
+    for (i = 0; i < indices.length / 3; i++) {
+        const vertex = new Vertex([positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]], i);
+        vertexes.push(vertex);
+    }
+    //create face struct
+    for (i = 0; i < indices.length / 3; i++) {
+        const face = {
+            a : indices[i * 3],
+            b : indices[i * 3 + 1],
+            c : indices[i * 3 + 2]
+        };
+        const triangle = new Triangle(vertexes[face.a], vertexes[face.b], vertexes[face.c], face);
+        faces.push(triangle);
+    }
+    const divide = [];
+    //Calculate the sum of the normal vectors of the shared faces of each vertex, then average it.
+    for (i = 0; i < vertexes.length; i++) {
+        const vertex = vertexes[i];
+        const vIndex = vertex.index;
+        let normal = [0, 0, 0];
+        const len = vertex.faces.length;
+        for (let j = 0; j < len; j++) {
+            vec3.add(normal, normal, vertex.faces[j].normal);
         }
-
-        vec3.set(p1, vertices[i1 * 3], vertices[i1 * 3 + 1], vertices[i1 * 3 + 2]);
-        vec3.set(p2, vertices[i2 * 3], vertices[i2 * 3 + 1], vertices[i2 * 3 + 2]);
-        vec3.set(p3, vertices[i3 * 3], vertices[i3 * 3 + 1], vertices[i3 * 3 + 2]);
-
-        vec3.sub(v21, p2, p1);
-        vec3.sub(v32, p2, p3);
-
-        vec3.cross(n, v21, v32);
-
-        vec3.normalize(n, n);
-
-        for (let i = 0; i < 3; i++) {
-            normals[i1 * 3 + i] = n[i];
-            normals[i2 * 3 + i] = n[i];
-            normals[i3 * 3 + i] = n[i];
-        }
+        vec3.set(divide, len, len, len);
+        vec3.divide(normal, normal, divide);
+        normals[vIndex * 3] = normal[0];
+        normals[vIndex * 3 + 1] = normal[1];
+        normals[vIndex * 3 + 2] = normal[2];
     }
     return normals;
 }
