@@ -128,15 +128,17 @@ export function buildNormals(positions, indices) {
         faces.push(triangle);
     }
     const divide = [];
+    const normal = [0, 0, 0];
     //Calculate the sum of the normal vectors of the shared faces of each vertex, then average it.
     for (i = 0; i < vertexes.length; i++) {
         const vertex = vertexes[i];
         const vIndex = vertex.index;
-        let normal = [0, 0, 0];
-        const len = vertex.faces.length;
+        vec3.set(normal, 0, 0, 0);
+        let len = vertex.faces.length;
         for (let j = 0; j < len; j++) {
             vec3.add(normal, normal, vertex.faces[j].normal);
         }
+        len = len || 1;
         vec3.set(divide, len, len, len);
         vec3.divide(normal, normal, divide);
         normals[vIndex * 3] = normal[0];
