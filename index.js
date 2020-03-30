@@ -113,7 +113,7 @@ export function buildNormals(positions, indices) {
     const normals = [];
     let i = 0;
     //create vertex struct
-    for (i = 0; i < indices.length / 3; i++) {
+    for (i = 0; i < positions.length / 3; i++) {
         const vertex = new Vertex([positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]], i);
         vertexes.push(vertex);
     }
