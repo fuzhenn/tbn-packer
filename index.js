@@ -113,8 +113,8 @@ export function buildNormals(positions, indices) {
     const normals = [];
     let i = 0;
     //create vertex struct
-    for (i = 0; i < positions.length / 3; i++) {
-        const vertex = new Vertex([positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]], i);
+    for (i = 0; i < indices.length; i++) {
+        const vertex = new Vertex([positions[indices[i]], positions[indices[i] + 1], positions[indices[i] + 2]], indices[i]);
         vertexes.push(vertex);
     }
     //create face struct
