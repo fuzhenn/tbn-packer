@@ -107,14 +107,23 @@ function positive(q) {
 }
 
 
-export function buildNormals(positions, indices) {
+const VERTICES = [];
+const TRIANGLES = [];
+
+export function buildNormals(positions, indices, out) {
     const faces = [];
     const vertexes = [];
-    const normals = [];
+    const normals = out || [];
     let i = 0;
     //create vertex struct
     for (i = 0; i < positions.length; i += 3) {
-        const vertex = new Vertex([positions[i], positions[i + 1], positions[i + 2]], i / 3);
+        let vertex = VERTICES[i / 3];
+        if (!vertex) {
+            vertex = new Vertex([positions[i], positions[i + 1], positions[i + 2]], i / 3);  
+            VERTICES[i / 3] = vertex;
+        }  else {
+            vertex.set(positions[i], positions[i + 1], positions[i + 2], i / 3);
+        }
         vertexes.push(vertex);
     }
     //create face struct
@@ -127,12 +136,14 @@ export function buildNormals(positions, indices) {
         }
     }
     for (i = 0; i < indices.length / 3; i++) {
-        const face = {
-            a : indices[i * 3],
-            b : indices[i * 3 + 1],
-            c : indices[i * 3 + 2]
-        };
-        const triangle = new Triangle(vertexes[face.a], vertexes[face.b], vertexes[face.c], face);
+        let triangle = TRIANGLES[i];
+        if (!triangle) {
+            triangle = new Triangle(vertexes, indices[i * 3], indices[i * 3 + 1], indices[i * 3 + 2]);
+            TRIANGLES[i] = triangle;
+        } else {
+            triangle.set(vertexes, indices[i * 3], indices[i * 3 + 1], indices[i * 3 + 2]);
+        }
+        
         faces.push(triangle);
     }
     const divide = [];
@@ -163,10 +174,10 @@ export function buildNormals(positions, indices) {
  * 
  * Generate tangents per vertex.
  */
-export function buildTangents(positions, normals, uvs, indices) {
+export function buildTangents(positions, normals, uvs, indices, out) {
     const nVertices = positions.length / 3;
 
-    const tangents = new Array(4 * nVertices);
+    const tangents = out || new Array(4 * nVertices);
 
     const tan1 = [], tan2 = [];
 
