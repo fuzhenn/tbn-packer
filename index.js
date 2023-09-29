@@ -124,6 +124,9 @@ export function buildNormals(positions, indices, out) {
     //Calculate the sum of the normal vectors of the shared faces of each vertex, then average it.
     for (let i = 0; i < normals.length; i += 3) {
         const count = counts[i / 3];
+        if (count === 0) {
+            continue;
+        }
         normals[i] /= count;
         normals[i + 1] /= count;
         normals[i + 2] /= count;
