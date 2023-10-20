@@ -110,8 +110,6 @@ export function buildNormals(positions, indices, out) {
     if (normals.setLength) {
         // array from arraypool
         normals.setLength(positions.length);
-    } else {
-        normals.length = positions.length;
     }
     const counts = COUNTS;
     if (counts.length < positions.length / 3) {
