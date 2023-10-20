@@ -158,6 +158,17 @@ function computeNormal(vertices, v1, v2, v3, normals, counts) {
     const cross = vec3.cross(V2, cb, ab);
     vec3.normalize(normal, cross);
 
+    normals[v1 * 3] = normals[v1 * 3] || 0;
+    normals[v2 * 3] = normals[v2 * 3] || 0;
+    normals[v3 * 3] = normals[v3 * 3] || 0;
+    normals[v1 * 3 + 1] = normals[v1 * 3 + 1] || 0;
+    normals[v2 * 3 + 1] = normals[v2 * 3 + 1] || 0;
+    normals[v3 * 3 + 1] = normals[v3 * 3 + 1] || 0;
+    normals[v1 * 3 + 2] = normals[v1 * 3 + 2] || 0;
+    normals[v2 * 3 + 2] = normals[v2 * 3 + 2] || 0;
+    normals[v3 * 3 + 2] = normals[v3 * 3 + 2] || 0;
+
+
     normals[v1 * 3] += normal[0];
     normals[v2 * 3] += normal[0];
     normals[v3 * 3] += normal[0];
