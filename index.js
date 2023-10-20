@@ -109,7 +109,9 @@ export function buildNormals(positions, indices, out) {
     const normals = out || [];
     if (normals.setLength) {
         // array from arraypool
-        normals.setLength(positions.length);    
+        normals.setLength(positions.length);
+    } else {
+        normals.length = positions.length;
     }
     const counts = COUNTS;
     if (counts.length < positions.length / 3) {
@@ -117,8 +119,13 @@ export function buildNormals(positions, indices, out) {
     }
     counts.fill(0, 0, positions.length / 3);
     normals.fill(0, 0, positions.length);
-    for (let i = 0; i < indices.length / 3; i++) {
-        computeNormal(positions, indices[i * 3], indices[i * 3 + 1], indices[i * 3 + 2], normals, counts);
+    const len = indices.length === undefined ? indices : indices.length;//indices may be number
+    for (let i = 0; i < len / 3; i++) {
+        if (indices.length === undefined) {
+            computeNormal(positions, i * 3, i * 3 + 1, i * 3 + 2, normals, counts);
+        } else {
+            computeNormal(positions, indices[i * 3], indices[i * 3 + 1], indices[i * 3 + 2], normals, counts);
+        }
     }
     
     //Calculate the sum of the normal vectors of the shared faces of each vertex, then average it.
