@@ -116,7 +116,6 @@ export function buildNormals(positions, indices, out) {
         counts.length = positions.length / 3;
     }
     counts.fill(0, 0, positions.length / 3);
-    normals.fill(0, 0, positions.length);
     const len = indices.length === undefined ? indices : indices.length;//indices may be number
     for (let i = 0; i < len / 3; i++) {
         if (indices.length === undefined) {
@@ -130,6 +129,9 @@ export function buildNormals(positions, indices, out) {
     for (let i = 0; i < normals.length; i += 3) {
         const count = counts[i / 3];
         if (count === 0) {
+            normals[i] = 0;
+            normals[i + 1] = 0;
+            normals[i + 2] = 0;
             continue;
         }
         normals[i] /= count;
